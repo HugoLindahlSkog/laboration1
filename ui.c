@@ -49,6 +49,17 @@ static void ui_menu()
 		"Menu",
 		"Exit\n",
 		"Bubble sort best case",
+		"Bubble sort worst case",
+		"Bubble sort average case\n",
+		"Quick sort best case",
+		"Quick sort worst case",
+		"Quick sort average case\n",
+		"Linear search best case",
+		"Linear search worst case",
+		"Linear search average case\n",
+		"Binary search best case",
+		"Binary search worst case",
+		"Binary search average case",
 		// TODO: complete menu
 	};
 
