@@ -97,6 +97,14 @@ void ui_run()
 				printf("todo> implemenet BE + present results in FE\n");
 				break;
 			// Invalid input
+			case 'd':
+				benchmark(bubble_sort_t, worst_t, result, RESULT_ROWS);
+				printf("todo> implement BE + present results in FE\n");
+				break;
+			case 'e':
+				benchmark(bubble_sort_t, average_t, result, RESULT_ROWS);
+				printf("todo> implement BE + present results in FE\n")
+				break;
 			default:
 				show_menu = false;
 				ui_invalid_input();
