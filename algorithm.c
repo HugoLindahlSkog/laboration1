@@ -6,9 +6,47 @@
 // Private
 //
 
+static void swap(int *a, int *b)
+{
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+static int partition(int *a, int left, int right)
+{
+	int pivot = a[right];
+	int i = left - 1;
+
+	for (int j = left; j < right; j++)
+	{
+		if (a[j] < pivot)
+		{
+			i++;
+			swap(&a[i], &a[right]);
+		}
+	}
+	swap(&a[i+1], &a[right]);
+	return i+1;
+}
+
+static int quickSort(int *a, int left, int right)
+{
+	if (left < right)
+	{
+		//dela upp arrayerna med partition
+		int pivot_index = partition(a, left, right);
+		quickSort(a, left, pivot_index - 1); //sortera arrayerna rekrusivt
+		quickSort(a, pivot_index + 1, right);
+	}
+	return 0;
+}
+
+
+
 //
 // Public
 //
+
 void bubble_sort(int *a, int n)
 {
 	 for (int i = 0; i < n - 1; i++)
@@ -41,42 +79,6 @@ void insertion_sort(int *a, int n)
 	}
 }
 
-
-static int partition(int *a, int left, int right)
-{
-	int pivot = a[right]; //välj sista element som pivot
-	int i = left - 1;
-
-	for (int j = left; j < right; j++)
-	{
-		if (a[j] < pivot) 
-		{
-			i++;
-			int temp = a[i];
-			a[i] = a[j];
-			a[j] = temp;  //byt plats på a[i] och a[j];
-		}
-	}
-	//byt plats på pivot till rätt position och retunera pivot nya index
-	int temp = a[i+1];
-	a[i+1] = a[right];
-	a[right] = temp;
-
-	return i+1;
-}
-
-static int quickSort(int *a, int left, int right)
-{
-	if (left < right)
-	{
-		//dela upp arrayerna med partition
-		int pivot_index = partition(a, left, right);
-		quickSort(a, left, pivot_index - 1); //sortera arrayerna rekrusivt
-		quickSort(a, pivot_index + 1, right);
-	}
-	return 0;
-}
-
 void quick_sort(int *a, int n)
 {
 	//anropa quicksort med hela arrayn
@@ -87,14 +89,29 @@ bool linear_search(const int *a, int n, int v)
 {
 	for (int i = 0; i < n; i++) //iterera varje element
 	{
-		if (a[i] == v) //om a[i] == v så returnera i
-		return i; 
+		if (a[i] == v) //om a[i] == v så returnera true
+		return true; 
 	}
 	return false;
 }
 
 bool binary_search(const int *a, int n, int v)
 {
+	int left = 0, right = n - 1;
+	while (left <= right)
+	{
+		int mid = left + (right - left) / 2;
+
+		if (a[mid] == v)
+			return true;
+		
+		if (a[mid] < v)
+			left = mid + 1;
+		
+		else
+			right = mid - 1;
+
+	}
 	return false; 
 } 
 
