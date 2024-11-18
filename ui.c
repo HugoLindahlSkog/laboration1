@@ -103,7 +103,43 @@ void ui_run()
 				break;
 			case 'e':
 				benchmark(bubble_sort_t, average_t, result, RESULT_ROWS);
-				printf("todo> implement BE + present results in FE\n")
+				printf("todo> implement BE + present results in FE\n");
+				break;
+			case 'f':
+				benchmark(quick_sort_t, best_t, result, RESULT_ROWS);
+				printf("todo> implement BE + present results in FE\n");
+				break;
+			case 'g':
+				benchmark(quick_sort_t, worst_t, result, RESULT_ROWS);
+				printf("todo");
+				break;
+			case 'h':
+				benchmark(quick_sort_t, average_t, result, RESULT_ROWS);
+				printf("todo");
+				break;
+			case 'i':
+				benchmark(linear_search_t, best_t, result, RESULT_ROWS);
+				printf("todo");
+				break;
+			case 'j':
+				benchmark(linear_search_t, worst_t, result, RESULT_ROWS);
+				printf("todo");
+				break;
+			case 'k':
+				benchmark(linear_search_t, average_t, result, RESULT_ROWS);
+				printf("todo");
+				break;
+			case 'l':
+				benchmark(binary_search_t, best_t, result, RESULT_ROWS);
+				printf("todo");
+				break;
+			case 'm':
+				benchmark(binary_search_t, worst_t, result, RESULT_ROWS);
+				printf("todo");
+				break;
+			case 'n':
+				benchmark(binary_search_t, average_t, result, RESULT_ROWS);
+				printf("todo");
 				break;
 			default:
 				show_menu = false;
