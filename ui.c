@@ -4,6 +4,8 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
+#include <string.h>
 
 //
 // Private
@@ -63,9 +65,44 @@ static void ui_menu()
 		// TODO: complete menu
 	};
 
-	ui_line('=', MENU_WIDTH);
+	ui_line('-', MENU_WIDTH);
 	ui_menu_options(options, sizeof(options) / sizeof(char *));
 	ui_line('-', MENU_WIDTH);
+}
+static void ui_results(const result_t *results, int rows, const char *title)
+{
+	int title_length = strlen(title); //längden på titeln
+	int padding = (RESULT_WIDTH - title_length) / 2; //mellanslag före titeln
+	ui_line('*', RESULT_WIDTH);
+	
+	for (int i = 0; i < padding; i++)
+	{
+		putchar(' ');
+	}
+	printf("%s\n", title);
+	
+	ui_line('-', RESULT_WIDTH); 
+
+	printf("%-8s %-12s %-12s %-12s %-12s\n",
+	"Size", "Time T(s)", "T/logn", "T/n", "T/nlog");
+
+	ui_line('-', RESULT_WIDTH);
+
+	for (int i = 0; i < rows; i++){
+		int size = results[i].size;
+		double time = results[i].time;
+		double logn = log(size) / log(2);
+
+		printf("%-8d %-12.6f %-12.6f %-12.6f%-12.6f\n",
+		size,
+		time,
+		time / logn,
+		time / size,
+		time / (size * logn));
+	}
+
+	ui_line('*', RESULT_WIDTH);
+
 }
 
 //
@@ -94,7 +131,7 @@ void ui_run()
 			// Bubble sort
 			case 'c':
 				benchmark(bubble_sort_t, best_t, result, RESULT_ROWS);
-				printf("todo> implemenet BE + present results in FE\n");
+				ui_results(result, RESULT_ROWS, "Bubble Sort - Best Case");
 				break;
 			// Invalid input
 			case 'd':
@@ -111,35 +148,35 @@ void ui_run()
 				break;
 			case 'g':
 				benchmark(quick_sort_t, worst_t, result, RESULT_ROWS);
-				printf("todo");
+				printf("todo\n");
 				break;
 			case 'h':
 				benchmark(quick_sort_t, average_t, result, RESULT_ROWS);
-				printf("todo");
+				printf("todo\n");
 				break;
 			case 'i':
 				benchmark(linear_search_t, best_t, result, RESULT_ROWS);
-				printf("todo");
+				printf("todo\n");
 				break;
 			case 'j':
 				benchmark(linear_search_t, worst_t, result, RESULT_ROWS);
-				printf("todo");
+				printf("todo\n");
 				break;
 			case 'k':
 				benchmark(linear_search_t, average_t, result, RESULT_ROWS);
-				printf("todo");
+				printf("todo\n");
 				break;
 			case 'l':
 				benchmark(binary_search_t, best_t, result, RESULT_ROWS);
-				printf("todo");
+				printf("todo\n");
 				break;
 			case 'm':
 				benchmark(binary_search_t, worst_t, result, RESULT_ROWS);
-				printf("todo");
+				printf("todo\n");
 				break;
 			case 'n':
 				benchmark(binary_search_t, average_t, result, RESULT_ROWS);
-				printf("todo");
+				printf("todo\n");
 				break;
 			default:
 				show_menu = false;

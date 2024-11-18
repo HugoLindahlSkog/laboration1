@@ -33,5 +33,8 @@ void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n);
 // implementering av generate_input
 void *generate_input(case_t c, int size);
 
+//frigör allokerat minne
+void free_input(void *input);
+
 
 #endif
