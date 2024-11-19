@@ -4,6 +4,9 @@
 #include "analyze.h"
 #include "algorithm.h"
 
+
+
+
 static void (*algorithm_functions[])(void *) = {
     (void (*)(void *))bubble_sort,
     (void (*)(void *))insertion_sort,
@@ -17,7 +20,7 @@ static void warmup(int loops)
 {
     volatile int tot = 0;
     for (int i = 0; i < loops; i++) {
-        tot += 1;
+        tot++;
     }
 }
 
@@ -26,15 +29,28 @@ static double measure_time(void (*func)(void *), void *arg)
 {
     warmup(1000000); //sköts intern utan att det märks
 
-    clock_t start, end;
-    start = clock();
+    /*clock_t start = clock();
     func(arg);
-    end = clock();
-    return (double)(end - start) / CLOCKS_PER_SEC;
-}
+    clock_t end = clock();
+    return (double)(end - start) / CLOCKS_PER_SEC;*/
 
-#include <stdlib.h>
-#include <stdio.h>
+    struct timespec start, end;
+    
+    if (clock_gettime(CLOCK_MONOTONIC, &start) == -1)
+    {
+        perror("clock_gettime start");
+        exit(EXIT_FAILURE);
+    }
+    func(arg);
+
+    if (clock_gettime(CLOCK_MONOTONIC, &end) == -1)
+    {
+        perror("clock_gettime end");
+        exit(EXIT_FAILURE);
+    }
+
+    return (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+}
 
 void *generate_input(case_t c, int size) {
     int *data = malloc(size * sizeof(int));
@@ -86,7 +102,8 @@ void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n)
     for (int i = 0; i < n; i++)
     {
         //generera input baserat på case_t
-        void *input = generate_input(c, SIZE_START * (1 << i));
+        int size = SIZE_START * (1 << i);
+        void *input = generate_input(c, size);
 
         if (input == NULL)
         {
@@ -97,8 +114,10 @@ void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n)
         //mät exekveringstiden
         double time = measure_time(algorithm_functions[a], input);
 
+        
+
         //fyll resultat i bufferten
-        buf[i].size = SIZE_START * (1 << i);
+        buf[i].size = size;
         buf[i].time = time;
 
         free_input(input);

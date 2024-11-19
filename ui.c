@@ -93,7 +93,7 @@ static void ui_results(const result_t *results, int rows, const char *title)
 		double time = results[i].time;
 		double logn = log(size) / log(2);
 
-		printf("%-8d %-12.6f %-12.6f %-12.6f%-12.6f\n",
+		printf("%-4d %-12.8f %-12.6e %-12.6e %-12.6e\n",
 		size,
 		time,
 		time / logn,
@@ -136,47 +136,47 @@ void ui_run()
 			// Invalid input
 			case 'd':
 				benchmark(bubble_sort_t, worst_t, result, RESULT_ROWS);
-				printf("todo> implement BE + present results in FE\n");
+				ui_results(result, RESULT_ROWS, "Bubble Sort - Worst Case");
 				break;
 			case 'e':
 				benchmark(bubble_sort_t, average_t, result, RESULT_ROWS);
-				printf("todo> implement BE + present results in FE\n");
+				ui_results(result, RESULT_ROWS, "Bubble Sort - Average Case");
 				break;
 			case 'f':
 				benchmark(quick_sort_t, best_t, result, RESULT_ROWS);
-				printf("todo> implement BE + present results in FE\n");
+				ui_results(result, RESULT_ROWS, "Quick Sort - Best Case");
 				break;
 			case 'g':
 				benchmark(quick_sort_t, worst_t, result, RESULT_ROWS);
-				printf("todo\n");
+				ui_results(result, RESULT_ROWS, "Quick Sort - Worst Case");
 				break;
 			case 'h':
 				benchmark(quick_sort_t, average_t, result, RESULT_ROWS);
-				printf("todo\n");
+				ui_results(result, RESULT_ROWS, "Quick Sort - Average Case");
 				break;
 			case 'i':
 				benchmark(linear_search_t, best_t, result, RESULT_ROWS);
-				printf("todo\n");
+				ui_results(result, RESULT_ROWS, "Linear Search - Best Case");
 				break;
 			case 'j':
 				benchmark(linear_search_t, worst_t, result, RESULT_ROWS);
-				printf("todo\n");
+				ui_results(result, RESULT_ROWS, "Linear Search - Worst Case");
 				break;
 			case 'k':
 				benchmark(linear_search_t, average_t, result, RESULT_ROWS);
-				printf("todo\n");
+				ui_results(result, RESULT_ROWS, "Linear Search - Average Case");
 				break;
 			case 'l':
 				benchmark(binary_search_t, best_t, result, RESULT_ROWS);
-				printf("todo\n");
+				ui_results(result, RESULT_ROWS, "Binary Search - Best Case");
 				break;
 			case 'm':
 				benchmark(binary_search_t, worst_t, result, RESULT_ROWS);
-				printf("todo\n");
+				ui_results(result, RESULT_ROWS, "Binary Search - Worst Case");
 				break;
 			case 'n':
 				benchmark(binary_search_t, average_t, result, RESULT_ROWS);
-				printf("todo\n");
+				ui_results(result, RESULT_ROWS, "Binary Search - Average Case");
 				break;
 			default:
 				show_menu = false;
