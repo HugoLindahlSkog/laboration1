@@ -10,6 +10,7 @@
 //
 // Private
 //
+
 static void ui_invalid_input()
 {
 	printf("info> bad input\n");
@@ -69,50 +70,211 @@ static void ui_menu()
 	ui_menu_options(options, sizeof(options) / sizeof(char *));
 	ui_line('-', MENU_WIDTH);
 }
-static void ui_results(const result_t *results, int rows, const char *title)
-{
-	int title_length = strlen(title); //längden på titeln
-	int padding = (RESULT_WIDTH - title_length) / 2; //mellanslag före titeln
-	ui_line('*', RESULT_WIDTH);
+const char* generate_title(algorithm_t a, case_t c){
+	const char *algorithm_name, *case_name;
+
+	switch (a){
+		case bubble_sort_t: algorithm_name = "Bubble Sort"; break;
+		case quick_sort_t: algorithm_name = "Quick Sort"; break;
+		case insertion_sort_t: algorithm_name = "Insertion Sort"; break;
+		case linear_search_t: algorithm_name = "Linear Search"; break;
+		case binary_search_t: algorithm_name = "Binary Search"; break;
+		default: algorithm_name = "Unknown Algorithm"; break;
 	
-	for (int i = 0; i < padding; i++)
-	{
-		putchar(' ');
-	}
-	printf("%s\n", title);
-	
-	ui_line('-', RESULT_WIDTH); 
-
-	printf("%-8s %-12s %-12s %-12s %-12s\n",
-	"Size", "Time T(s)", "T/logn", "T/n", "T/nlog");
-
-	ui_line('-', RESULT_WIDTH);
-
-	for (int i = 0; i < rows; i++){
-		int size = results[i].size;
-		double time = results[i].time;
-		double logn = log(size) / log(2);
-
-		printf("%-4d %-12.8f %-12.6e %-12.6e %-12.6e\n",
-		size,
-		time,
-		time / logn,
-		time / size,
-		time / (size * logn));
 	}
 
-	ui_line('*', RESULT_WIDTH);
+	switch (c) {
+		case best_t: case_name = "Best Case"; break;
+        case worst_t: case_name = "Worst Case"; break;
+        case average_t: case_name = "Average Case"; break;
+        default: case_name = "Unknown Case"; break;
+    }
 
+	static char title[100];
+	snprintf(title, sizeof(title), "%s - %s", algorithm_name, case_name);
+	return title;
 }
 
 //
 // Public
 //
+
+void ui_results(int size, double *resultArr, int n, algorithm_t a, case_t c)
+{ 
+	const char *title = generate_title(a, c);
+	int title_length = strlen(title); //längden på titeln
+	int padding = (RESULT_WIDTH - title_length) / 2; //mellanslag före titeln
+	ui_line('*', RESULT_WIDTH);
+	
+	printf("%*s%s\n", padding, "",title);
+	
+	ui_line('-', RESULT_WIDTH); 
+
+	printf("%5s \t","Size");
+	printf("%10s \t", "Time T(s)");
+	printf("%7s \t", "T/logn");
+	printf("%4s \t", "T/n");
+	printf("%14s \t\n", "T/nlog");
+
+	ui_line('-', RESULT_WIDTH);
+
+	for (int i = 0; i < n; i++){
+		
+		switch(a){
+			case bubble_sort_t:
+				switch(c){
+					case best_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i] / log(size)),
+						(resultArr[i] / size),
+						(resultArr[i] / (size * size)));
+						break;
+					case worst_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i] / (size * log(size))),
+						(resultArr[i] / (size * size)),
+						(resultArr[i] / ((long long)size * size * size)));
+						break;
+					case average_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i] / (size * log(size))),
+						(resultArr[i] / (size * size)),
+						(resultArr[i] / ((long long)size * size * size)));
+						break;
+				}
+				break;
+			case insertion_sort_t:
+				switch(c){
+					case best_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i] / log(size)),
+						(resultArr[i] / size),
+						(resultArr[i] / (size * size)));
+						break;
+					case worst_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i] / (size * log(size))),
+						(resultArr[i] / (size * size)),
+						(resultArr[i] / ((long long)size * size * size)));
+						break;
+					case average_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i] / (size * log(size))),
+						(resultArr[i] / (size * size)),
+						(resultArr[i] / ((long long)size * size * size)));
+						break;
+				}
+				break;
+			case quick_sort_t:
+				switch(c){
+					case best_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i] / size),
+						(resultArr[i] / (size * log(size))),
+						(resultArr[i] / (size * size)));
+						break;
+					case worst_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i] / (size * log(size))),
+						(resultArr[i] / (size * size)),
+						(resultArr[i] / ((long long)size * size * size)));
+						break;
+					case average_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i] / size),
+						(resultArr[i] / (size * log(size))),
+						(resultArr[i] / (size * size)));
+						break;
+				}
+				break;
+			case linear_search_t:
+				switch(c){
+					case best_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i]),
+						(resultArr[i]),
+						(resultArr[i] / size));
+						break;
+					case worst_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i] / log(size)),
+						(resultArr[i] / size),
+						(resultArr[i] / (size * size)));
+						break;
+					case average_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i] / size),
+						(resultArr[i] / (size * log(size))),
+						(resultArr[i] / (size * size)));
+						break;
+				}
+				break;
+			case binary_search_t:
+				switch(c){
+					case best_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i]),
+						(resultArr[i]),
+						(resultArr[i] / size));
+						break;
+					case worst_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i]),
+						(resultArr[i]),
+						(resultArr[i]));
+						break;
+					case average_t:
+						printf("%-5d \t %.8f \t %.4e \t %.4e \t %.4e\n",
+						(size),
+						(resultArr[i]),
+						(resultArr[i]),
+						(resultArr[i] / log(size)),
+						(resultArr[i] / size));
+						break;
+				}
+				break;
+		}
+			size *= 2;
+	}
+	
+
+	ui_line('*', RESULT_WIDTH);
+
+}
+
 void ui_run()
 {
 	bool running, show_menu;
 	result_t result[RESULT_ROWS];
-	
+	//double resultArr[RESULT_ROWS];
 	show_menu = true;
 	running = true;
 	while (running) {
@@ -131,52 +293,109 @@ void ui_run()
 			// Bubble sort
 			case 'c':
 				benchmark(bubble_sort_t, best_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Bubble Sort - Best Case");
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, bubble_sort_t, best_t);*/
 				break;
 			// Invalid input
 			case 'd':
 				benchmark(bubble_sort_t, worst_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Bubble Sort - Worst Case");
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, bubble_sort_t, worst_t);*/
 				break;
 			case 'e':
 				benchmark(bubble_sort_t, average_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Bubble Sort - Average Case");
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, bubble_sort_t, average_t);*/
 				break;
 			case 'f':
 				benchmark(quick_sort_t, best_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Quick Sort - Best Case");
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, quick_sort_t, best_t);*/
 				break;
 			case 'g':
 				benchmark(quick_sort_t, worst_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Quick Sort - Worst Case");
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, quick_sort_t, worst_t);*/
 				break;
 			case 'h':
 				benchmark(quick_sort_t, average_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Quick Sort - Average Case");
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, quick_sort_t, worst_t);*/
 				break;
 			case 'i':
-				benchmark(linear_search_t, best_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Linear Search - Best Case");
+				benchmark(insertion_sort_t, best_t, result, RESULT_ROWS);
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, insertion_sort_t, best_t);*/
 				break;
 			case 'j':
-				benchmark(linear_search_t, worst_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Linear Search - Worst Case");
+				benchmark(insertion_sort_t, worst_t, result, RESULT_ROWS);
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, insertion_sort_t, worst_t);*/
 				break;
 			case 'k':
-				benchmark(linear_search_t, average_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Linear Search - Average Case");
+				benchmark(insertion_sort_t, average_t, result, RESULT_ROWS);
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, insertion_sort_t, average_t);*/
 				break;
 			case 'l':
-				benchmark(binary_search_t, best_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Binary Search - Best Case");
+				/*benchmark(linear_search_t, best_t, result, RESULT_ROWS);
+				for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, linear_search_t, best_t);*/
 				break;
 			case 'm':
-				benchmark(binary_search_t, worst_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Binary Search - Worst Case");
+				benchmark(linear_search_t, worst_t, result, RESULT_ROWS);
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, linear_search_t, worst_t);*/
 				break;
 			case 'n':
+				benchmark(linear_search_t, average_t, result, RESULT_ROWS);
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, linear_search_t, average_t);*/
+				break;
+			case 'o':
+				benchmark(binary_search_t, best_t, result, RESULT_ROWS);
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, binary_search_t, best_t);*/
+				break;
+			case 'p':
+				benchmark(binary_search_t, worst_t, result, RESULT_ROWS);
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, binary_search_t, worst_t);*/
+				break;
+			case 'q':
 				benchmark(binary_search_t, average_t, result, RESULT_ROWS);
-				ui_results(result, RESULT_ROWS, "Binary Search - Average Case");
+				/*for (int i = 0; i < RESULT_ROWS; i++){
+					resultArr[i] = result[i].time;
+				}
+				ui_results(SIZE_START, resultArr, RESULT_ROWS, binary_search_t, average_t);*/
 				break;
 			default:
 				show_menu = false;

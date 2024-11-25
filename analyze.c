@@ -1,76 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include "analyze.h"
 #include "algorithm.h"
+#include "ui.h"
 
 
-
-
-static void (*algorithm_functions[])(void *) = {
-    (void (*)(void *))bubble_sort,
-    (void (*)(void *))insertion_sort,
-    (void (*)(void *))quick_sort,
-    (void (*)(void *))linear_search,
-    (void (*)(void *))binary_search
-};
-
-//en privat funktion som värmer upp
-static void warmup(int loops)
-{
-    volatile int tot = 0;
-    for (int i = 0; i < loops; i++) {
-        tot++;
-    }
-}
-
-//en privat funktion som mäter tiden
-static double measure_time(void (*func)(void *), void *arg)
-{
-    warmup(1000000); //sköts intern utan att det märks
-
-    /*clock_t start = clock();
-    func(arg);
-    clock_t end = clock();
-    return (double)(end - start) / CLOCKS_PER_SEC;*/
-
-    struct timespec start, end;
+static void generate_input(case_t c, int arr[], int size) {
     
-    if (clock_gettime(CLOCK_MONOTONIC, &start) == -1)
-    {
-        perror("clock_gettime start");
-        exit(EXIT_FAILURE);
-    }
-    func(arg);
-
-    if (clock_gettime(CLOCK_MONOTONIC, &end) == -1)
-    {
-        perror("clock_gettime end");
-        exit(EXIT_FAILURE);
-    }
-
-    return (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
-}
-
-void *generate_input(case_t c, int size) {
-    int *data = malloc(size * sizeof(int));
-    if (!data) {
-        fprintf(stderr, "Error: Failed to allocate memory for input of size %d\n", size);
-        return NULL;
-    }
-
     switch (c) {
         case best_t:
             // Best case: Sorterad array
             for (int i = 0; i < size; i++) {
-                data[i] = i;
+                arr[i] = i;
             }
             break;
 
         case worst_t:
             // Worst case: Omvänd sorterad array
             for (int i = 0; i < size; i++) {
-                data[i] = size - i;
+                arr[i] = size - i;
             }
             break;
 
@@ -78,50 +28,134 @@ void *generate_input(case_t c, int size) {
         default:
             // Average case: Slumpmässiga data
             for (int i = 0; i < size; i++) {
-                data[i] = rand() % size;
+                arr[i] = rand() % size;
             }
             break;
     }
-
-    return data;
 }
-//frigör minne
-void free_input(void *input)
-{
-    if (input != NULL)
-    {
-        free(input);
+static void bestCase_quick(int arr[], int low, int high, int *currentValue){
+    if (high <= low) {
+        return; //basfall: om området är för litet
+    }
+    int mid = (low + high) / 2; //välj ett mitten element
+    arr[mid] = (*currentValue)++; //tildela värdet till pivot
+    bestCase_quick(arr, low, mid - 1, currentValue); //vänster
+    bestCase_quick(arr, mid + 1, high, currentValue); //höger
+}
+
+static void quickSort_arr(case_t c, int arr[], int size){
+
+    switch(c){
+        case best_t:
+            int currentValue = 1;
+            bestCase_quick(arr, 0, size - 1, &currentValue);
+            break;
+
+        case worst_t:
+            for (int i = 0; i < size; i++){
+                arr[i] = size - 1;
+            }
+            break;
+
+        case average_t:
+             for (int i = 0; i < size; i++){
+                 arr[i] = rand() % size;
+             }
+             break;
     }
 }
 
+static void searchArr(algorithm_t a,case_t c, int arr[],int size){
+    switch (c) {
+        case best_t:
+            for (int i = 0; i < size; i++){
+                arr[i] = 1;
+            }
+            break;
+        
+        case worst_t:
+           for (int i = 0; i < size; i++){
+            arr[i] = 0;
+           }
+        case average_t:
+            if (a == linear_search_t){
+                for (int i = 0; i < size; i++) {
+                    arr[i] = (i == size / 2) ? 1 : 0;
+                }
+            } else {
+                for (int i = 0; i < size; i++) {
+                    arr[i] = (i == size / 4) ? 1 : 0;
+                }
+            }
+        break;
+
+    default:
+    }       
+}
 
 //en public funktion som tar in algoritmen med olika inputs
 void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n)
 {
+    struct timespec start;
+    struct timespec end;
+    srand(time(NULL));
 
-    for (int i = 0; i < n; i++)
-    {
-        //generera input baserat på case_t
-        int size = SIZE_START * (1 << i);
-        void *input = generate_input(c, size);
+    memset(buf, 0, n * sizeof(result_t));
 
-        if (input == NULL)
-        {
-            fprintf(stderr, "Error: Failed to generate input for case %d\n", i);
-            continue;
-        }
-
-        //mät exekveringstiden
-        double time = measure_time(algorithm_functions[a], input);
-
-        
-
-        //fyll resultat i bufferten
-        buf[i].size = size;
-        buf[i].time = time;
-
-        free_input(input);
+    int size = SIZE_START;
+    int *arr = (int*)malloc(size * sizeof(int));
+    if (!arr) {
+        fprintf(stderr, "Minnesomallokering misslyckades.\n");
+        return;
     }
+    
+    double timeArr[n];
+
+    memset(timeArr, 0, sizeof(timeArr));
+
+    for (int i = 0; i < n; i++){
+        generate_input(c, arr, size);;
+
+        clock_gettime(CLOCK_MONOTONIC, &start);
+        switch(a){
+            case bubble_sort_t:
+                bubble_sort(arr, size);
+                break;
+            case quick_sort_t:
+                quickSort_arr(c, arr, size);
+                quick_sort(arr, size);
+                break;
+            case insertion_sort_t:
+                insertion_sort(arr, size);
+                break;
+            case linear_search_t:
+                searchArr(a, c, arr, size);
+                linear_search(arr, size, arr[size / 2]);
+                break;
+            case binary_search_t:
+                searchArr(a, c, arr, size);
+                binary_search(arr, size, arr[size / 2]);
+                break;
+        }
+        clock_gettime(CLOCK_MONOTONIC, &end);
+
+        double time_sec = ((end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9);
+        buf->time = time_sec;
+        buf->size = size;
+        timeArr[i] = time_sec; 
+        
+        size *= 2;
+        
+        
+        int *new_Arr = realloc(arr, size * sizeof(int));
+        if (!new_Arr){
+            fprintf(stderr, "Minnesomallokering misslyckades.\n");
+            free(arr);
+            return;
+        }
+        arr = new_Arr;
+    }
+    int temp_size = SIZE_START;
+    ui_results(temp_size, timeArr, n, a, c);
+    free(arr);
 }
-
-

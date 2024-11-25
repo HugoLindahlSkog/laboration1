@@ -12,31 +12,31 @@ static void swap(int *a, int *b)
 	*a = *b;
 	*b = temp;
 }
-static int partition(int *a, int left, int right)
+static int partition(int *a, int low, int high)
 {
-	int pivot = a[right];
-	int i = left - 1;
+	int pivot = a[high];
+	int i = low - 1;
 
-	for (int j = left; j < right; j++)
+	for (int j = low; j < high; j++)
 	{
 		if (a[j] < pivot)
 		{
 			i++;
-			swap(&a[i], &a[right]);
+			swap(&a[i], &a[high]);
 		}
 	}
-	swap(&a[i+1], &a[right]);
+	swap(&a[i+1], &a[high]);
 	return i+1;
 }
 
-static int quickSort(int *a, int left, int right)
+static int quickSort(int *a, int low, int high)
 {
-	if (left < right)
+	if (low < high)
 	{
 		//dela upp arrayerna med partition
-		int pivot_index = partition(a, left, right);
-		quickSort(a, left, pivot_index - 1); //sortera arrayerna rekrusivt
-		quickSort(a, pivot_index + 1, right);
+		int pivot_index = partition(a, low, high);
+		quickSort(a, low, pivot_index - 1); //sortera arrayerna rekrusivt
+		quickSort(a, pivot_index + 1, high);
 	}
 	return 0;
 }
@@ -51,6 +51,7 @@ void bubble_sort(int *a, int n)
 {
 	 for (int i = 0; i < n - 1; i++)
 	 {
+		int swapped = 0;
 		for (int j = 0; j < n-i-1; j++)
 		{
 			if (a[j] > a[j+1])
@@ -58,7 +59,12 @@ void bubble_sort(int *a, int n)
 				int temp = a[j];
 				a[j] = a[j+1];
 				a[j+1] = temp;
+				swapped = 1;
 			}
+		}
+		if (!swapped)
+		{
+			break;
 		}
 	}
 }
